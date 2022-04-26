@@ -1,0 +1,36 @@
+.showMap {
+  height: 600px;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+  border: 1px solid grey;
+}
+
+th, td {
+  width: 10%;
+  font-size: 18px;
+  text-align: center;
+}
+
+tr:hover {
+  background-color: rgb(243, 242, 242);
+}
+
+.card {
+  margin-top: 20px;
+}
+
+.card .card {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.card .card .card-body .row {
+  margin-bottom: 10px;
+}
+
+.card .card .card-body .row:last-child {
+  margin-bottom: 0px;
+}

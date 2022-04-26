@@ -1,0 +1,50 @@
+.slider a {
+  width: 14rem;
+  margin: 0 10px;
+  color: #212529;
+  text-decoration: none;
+}
+
+.slider a:hover {
+  color: #549edf;
+}
+
+.left-arrow {
+  position: absolute;
+  top: 43%;
+  left: -40px;
+}
+
+.right-arrow {
+  position: absolute;
+  top: 43%;
+  right: -40px;
+}
+
+.slick-dots {
+  position: absolute;
+  bottom: -7%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.slick-dots li {
+  display: inline-block;
+  margin: 0px 10px;
+}
+
+.slick-dots li button {
+  font-size: 0;
+  height: 10px;
+  width: 10px;
+  background-color: rgba(0, 0, 0, 0.28);
+  border-radius: 50%;
+  border: none;
+  transition: .3s;
+}
+
+.slick-dots .slick-active button {
+  background-color: #2a8bc6;
+  height: 15px;
+  width: 15px;
+}

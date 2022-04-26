@@ -1,0 +1,197 @@
+:root {
+  --blue: #4e73df;
+  --indigo: #6610f2;
+  --purple: #6f42c1;
+  --pink: #e83e8c;
+  --red: #e74a3b;
+  --orange: #fd7e14;
+  --yellow: #f6c23e;
+  --green: #1cc88a;
+  --teal: #20c9a6;
+  --cyan: #36b9cc;
+  --white: #fff;
+  --gray: #858796;
+  --gray-dark: #5a5c69;
+  --primary: #4e73df;
+  --secondary: #858796;
+  --success: #1cc88a;
+  --info: #36b9cc;
+  --warning: #f6c23e;
+  --danger: #e74a3b;
+  --light: #f8f9fc;
+  --dark: #5a5c69;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+#content-wrapper {
+  width: 100%;
+}
+
+#wrapper {
+  display: flex;
+  background-color: #f8f9fc;
+}
+
+.sidebar {
+  width: 14rem !important;
+  min-height: 100vh;
+}
+
+.sidebar .sidebar-brand {
+  padding: 1.5rem 1rem;
+}
+
+.sidebar-brand-icon img {
+  width: 65px;
+  height: 60px;
+}
+
+.sidebar .sidebar-heading {
+  color: rgba(255, 255, 255, 0.4);
+  text-align: left;
+  padding: 0 1rem;
+  font-weight: 800;
+}
+
+.sidebar hr.sidebar-divider {
+  border-top: 1px solid rgb(255, 255, 255);
+  margin: 0 1rem 1rem;
+}
+
+.sidebar .nav-item .nav-link {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 1rem;
+  width: 14rem;
+}
+
+.sidebar .nav-item .nav-link[data-bs-toggle="collapse"].collapsed::after {
+  content: "\f105";
+}
+
+.sidebar .nav-item .nav-link[data-bs-toggle="collapse"]::after {
+  width: 1rem;
+  text-align: center;
+  float: right;
+  vertical-align: 0;
+  border: 0;
+  font-weight: 900;
+  content: "\f107";
+  font-family: "Font Awesome 5 Free";
+}
+
+.topbar .nav-item .nav-link .img-profile {
+  height: 2rem;
+  width: 2rem;
+}
+
+/* Copy from template */
+.sidebar .nav-item .collapse .collapse-inner {
+  border-radius: 0.35rem;
+  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.sidebar .nav-item .collapse .collapse-inner,
+.sidebar .nav-item .collapsing .collapse-inner {
+  padding: 0.5rem 0;
+  min-width: 10rem;
+  font-size: 0.85rem;
+  margin: 0 0 1rem 0;
+}
+
+.sidebar .nav-item .collapse .collapse-inner .collapse-header,
+.sidebar .nav-item .collapsing .collapse-inner .collapse-header {
+  margin: 0;
+  white-space: nowrap;
+  padding: 0.5rem 1.5rem;
+  text-transform: uppercase;
+  font-weight: 800;
+  font-size: 0.65rem;
+  color: #b7b9cc;
+}
+
+.sidebar .nav-item .collapse .collapse-inner .collapse-item,
+.sidebar .nav-item .collapsing .collapse-inner .collapse-item {
+  padding: 0.5rem 1rem;
+  margin: 0 0.5rem;
+  display: block;
+  color: #3a3b45;
+  text-decoration: none;
+  border-radius: 0.35rem;
+  white-space: nowrap;
+}
+
+.sidebar .nav-item .collapse .collapse-inner .collapse-item:hover,
+.sidebar .nav-item .collapsing .collapse-inner .collapse-item:hover {
+  background-color: #eaecf4;
+}
+
+.sidebar .nav-item .collapse .collapse-inner .collapse-item:active,
+.sidebar .nav-item .collapsing .collapse-inner .collapse-item:active {
+  background-color: #dddfeb;
+}
+
+.sidebar .nav-item .collapse .collapse-inner .collapse-item.active,
+.sidebar .nav-item .collapsing .collapse-inner .collapse-item.active {
+  color: #4e73df;
+  font-weight: 700;
+}
+
+.sidebar .sidebar-brand {
+  color: #fff;
+}
+
+.sidebar .nav-item .nav-link {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.sidebar .nav-item .nav-link i {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.sidebar .nav-item .nav-link:active,
+.sidebar .nav-item .nav-link:focus,
+.sidebar .nav-item .nav-link:hover {
+  color: #fff;
+}
+
+.sidebar .nav-item .nav-link:active i,
+.sidebar .nav-item .nav-link:focus i,
+.sidebar .nav-item .nav-link:hover i {
+  color: #fff;
+}
+
+.sidebar .nav-item .nav-link[data-toggle="collapse"]::after {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.sidebar .nav-item.active .nav-link {
+  color: #fff;
+}
+
+.sidebar .nav-item.active .nav-link i {
+  color: #fff;
+}
+
+.sidebar #sidebarToggle {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.sidebar #sidebarToggle::after {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.sidebar #sidebarToggle:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.sidebar.toggled #sidebarToggle::after {
+  color: rgba(255, 255, 255, 0.5);
+}
+/* Copy from template */

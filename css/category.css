@@ -1,0 +1,51 @@
+.search {
+  all: unset;
+  cursor: pointer;
+  width: 44px;
+  height: 44px;
+}
+
+.searchButton{
+  padding: 0;
+  border: none;
+  background: none;
+} 
+
+.hidden{
+  display: none;
+}
+
+#selected-label .selected-badge span{
+  margin-left: 5px;
+}
+#selected-label .selected-badge span:first-child{
+  margin-left: 0px;
+}
+
+#district-selector a,#cuisine-selector a,#type-selector a{
+  color: #212529;
+  text-decoration: none;
+}
+
+#district-selector a:hover,#cuisine-selector a:hover,#type-selector a:hover{
+  color: #337ab7;
+}
+
+.container ul{
+  margin: 0;
+  padding: 0;
+}
+
+.badge .btn-close{
+  font-size: 9px;
+  margin-left: 3px;
+}
+
+#result li a {
+  color: #212529;
+  text-decoration: none;
+}
+
+#result li a:hover {
+  color: #549edf;
+}

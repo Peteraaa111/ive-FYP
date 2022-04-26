@@ -1,0 +1,31 @@
+.recommendation .card img {
+  vertical-align: middle;
+  border-style: none;
+  height: 355px;
+  object-fit: cover;
+}
+
+.recommendation a {
+  color: #212529;
+  text-decoration: none;
+}
+
+.recommendation a:hover {
+  color: #549edf;
+}
+
+#recommended .card img {
+  vertical-align: middle;
+  border-style: none;
+  height: 355px;
+  object-fit: cover;
+}
+
+#recommended a {
+  color: #212529;
+  text-decoration: none;
+}
+
+#recommended a:hover {
+  color: #549edf;
+}

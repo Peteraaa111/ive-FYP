@@ -1,0 +1,8 @@
+#planner_list .card:hover {
+  background-color: #f8f9fc;
+}
+
+#planner_list .card {
+  color: black;
+  text-decoration: none;
+}

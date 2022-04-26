@@ -1,0 +1,72 @@
+
+.fw-semibold {
+  font-weight: 600;
+}
+
+/* page content css*/
+
+#plannerHeader {
+  border: 1px solid grey;
+  position: absolute;
+  top: 100px;
+  /* left: 10px; */
+}
+
+#planner {
+  border: 1px solid grey;
+  position: absolute;
+  top: 170px;
+  /* left: 10px; */
+  height: 530px;
+  overflow: auto;
+}
+
+#createDiv {
+  position: absolute;
+  top: 700px;
+  /* left: 10px; */
+}
+
+#aroundHeader {
+  border: 1px solid grey;
+  position: absolute;
+  top: 100px;
+  right: 12px;
+}
+
+#aroundBody {
+  border: 1px solid grey;
+  position: absolute;
+  height: 575px;
+  top: 170px;
+  right: 12px;
+  overflow: auto;
+}
+
+.showMap {
+  height: 700px;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+  border: 1px solid grey;
+}
+
+#restaurant_allData,
+#attraction_allData,
+#guesthouse_allData,
+#district_allData {
+  display: none;
+}
+
+#mapHeader {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+#createButton {
+  font-size: 20px;
+  width: 330px;
+  border: 1px solid gray;
+}

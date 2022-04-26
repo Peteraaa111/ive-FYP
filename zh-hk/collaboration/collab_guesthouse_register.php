@@ -1,0 +1,1086 @@
+<?php
+// Start the SESSION
+session_start();
+
+// Get database connection variable
+include_once('/xampp/htdocs/travelHK.com/dbConnect.php');
+global $conn;
+
+// Get the request id
+$request_id = $_GET['id'];
+
+// Get the request details
+$details_sql = "SELECT * FROM `guesthouse_partner_request` WHERE `request_id` = $request_id;";
+$details_rs = mysqli_query($conn, $details_sql);
+$details = mysqli_fetch_assoc($details_rs);
+
+// Get the payment methods
+$methods_sql = "SELECT * FROM `guesthouse_partner_request_payment_method` WHERE `request_id` = $request_id;";
+$methods_rs = mysqli_query($conn, $methods_sql);
+$methods = array();
+while ($method = mysqli_fetch_assoc($methods_rs)) {
+  $methods[] = $method['method_id'];
+}
+
+// Get the status
+$status_sql = "SELECT * FROM `partner_request_status` WHERE `status_ID` = ".$details['status'].";";
+$status_rs = mysqli_query($conn, $status_sql);
+$status = mysqli_fetch_assoc($status_rs);
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>民宿合作夥伴帳戶註冊 - 香港本地旅遊平台 | 本地遊</title>
+
+  <!-- Link the default css and js library -->
+  <?php include_once('/xampp/htdocs/travelHK.com/library.php'); ?>
+  <script src="/js/collaboration/guesthouse/collab_register.js"></script>
+  <link rel="stylesheet" href="/css/collab_register.css">
+</head>
+
+<body>
+
+  <!-- Header -->
+  <?php include_once('../common/header.php'); ?>
+
+  <!-- Main Content -->
+  <div class="container">
+    <!-- Progress Bar -->
+    <div class="row">
+      <div class="col-md-10 offset-1">
+        <div class="progress">
+          <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Form -->
+    <div class="row">
+      <div class="col-md-12">
+
+        <!-- Step 1 - Collab request details -->
+        <section id="step-1">
+          <div class="row">
+            <div class="col-md-10 offset-1">
+              <!-- Title -->
+              <div class="card">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-8">
+                      <h3 class="text-secondary">民宿合作夥伴申請表 (ID: <?php echo $details['request_id']; ?>)</h3>
+                    </div>
+                    <div class="col-md-4 text-end">
+                      <?php
+                      switch($details['status'])
+                      {
+                        case 1:
+                          echo '<span class="badge bg-primary fs-5">'.$status['zh-hk'].'</span>';
+                          break;
+                        case 2:
+                          echo '<span class="badge bg-info text-dark fs-5">'.$status['zh-hk'].'</span>';
+                          break;
+                        case 3:
+                          echo '<span class="badge bg-success fs-5">'.$status['zh-hk'].'</span>';
+                          break;
+                        case 4:
+                          echo '<span class="badge bg-success fs-5">'.$status['zh-hk'].'</span>';
+                          break;
+                        case 5:
+                          echo '<span class="badge bg-danger fs-5">'.$status['zh-hk'].'</span>';
+                          break;
+                      }
+                      ?>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Guesthouse Information -->
+              <input type="hidden" name="request-id" id="request-id" value="<?php echo $details['request_id']; ?>">
+              <div class="card">
+                <div class="card-body">
+                  <h3 class="text-secondary">民宿資料</h3>
+                  <!-- Attraction name -->
+                  <div class="row">
+                    <div class="col-md-2">
+                      <label>民宿名稱</label>
+                      <span class="text-danger">*</span>
+                    </div>
+                    <div class="col-md-5">
+                      <input class="form-control" type="text" placeholder="中文" value=<?php echo '"' . $details['guesthouse_chinese_name'] . '"'; ?> readonly>
+                    </div>
+                    <div class="col-md-5">
+                      <input class="form-control" type="text" placeholder="英文" value=<?php echo '"' . $details['guesthouse_english_name'] . '"'; ?> readonly>
+                    </div>
+                  </div>
+                  <!-- District -->
+                  <div class="row">
+                    <div class="col-md-2">
+                      <label>地區</label>
+                      <span class="text-danger">*</span>
+                    </div>
+                    <div class="col-md-10">
+                      <select class="form-select" disabled="true">
+                        <option value="" selected disabled hidden>請選擇地區</option>
+                        <?php
+                        $region_sql = "SELECT * FROM `hong_kong_region`;";
+                        $region_rs = mysqli_query($conn, $region_sql);
+
+                        while ($region = mysqli_fetch_assoc($region_rs)) {
+                          echo "<optgroup label=\"" . $region['zh-hk'] . "\">";
+
+                          $district_sql = "SELECT * FROM `hong_kong_district` WHERE region_id = " . $region['region_id'] . ";";
+                          $district_rs = mysqli_query($conn, $district_sql);
+                          while ($district = mysqli_fetch_assoc($district_rs)) {
+                            if ($details['district'] == $district['district_id']) {
+                              echo "<option value=\"" . $district['district_id'] . "\" selected>" . $district['zh-hk'] . "</option>";
+                            } else {
+                              echo "<option value=\"" . $district['district_id'] . "\">" . $district['zh-hk'] . "</option>";
+                            }
+                          }
+                          echo "</optgroup>";
+                        }
+                        ?>
+                      </select>
+                    </div>
+                  </div>
+                  <!-- Physical Address -->
+                  <div class="row">
+                    <div class="col-md-2">
+                      <label>地址</label>
+                      <span class="text-danger">*</span>
+                    </div>
+                    <div class="col-md-10">
+                      <input class="form-control" type="text" placeholder="中文" value=<?php echo '"' . $details['chinese_address'] . '"'; ?> readonly>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-10 offset-2">
+                      <input class="form-control" type="text" placeholder="英文" value=<?php echo '"' . $details['english_address'] . '"'; ?> readonly>
+                    </div>
+                  </div>
+                  <!-- Guesthouse Contact Information -->
+                  <div class="row">
+                    <div class="col-md-2">
+                      <label>民宿聯絡資料</label>
+                      <span class="text-danger">*<span>
+                    </div>
+                    <div class="col-md-5">
+                      <input class="form-control" type="tel" placeholder="聯絡電話" minlength="8" maxlength="8" oninput="value=value.replace(/[^\d]/g,'')" value=<?php echo '"' . $details['guesthouse_phone_number'] . '"'; ?> readonly>
+                    </div>
+                  </div>
+                  <!-- Storefront -->
+                  <div class="row">
+                    <div class="col-md-2">
+                      <label>門面相片</label>
+                      <span class="text-danger">*<span>
+                    </div>
+                    <div class="col-md-10">
+                      <a class="btn btn-primary" href=<?php echo "\"/travelhk.com/data/collab_request/guesthouse/" . $details['request_id'] . "/storefront.jpg\""; ?> target="_blank">查看相片</a>
+                    </div>
+                  </div>
+                  <!-- Number of Rooms -->
+                  <div class="row">
+                    <div class="col-md-2">
+                      座位數目
+                      <span class="text-danger">*<span>
+                    </div>
+                    <div class="col-md-10">
+                      <div class="input-group">
+                        <input type="number" class="form-control" value=<?php echo '"' . $details['number_of_rooms'] . '"'; ?> readonly>
+                        <span class="input-group-text">間</span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Opening Hours -->
+                  <div class="row">
+                    <div class="col-md-2">
+                      <label>開放時間</label>
+                      <span class="text-danger">*<span>
+                    </div>
+                    <div class="col-md-2">星期一至五</div>
+                    <div class="col-md-8">
+                        <?php
+                        switch ($details['weekday_business_hours']) {
+                          case 'closed':
+                            echo '
+                            <input type="time" class="form-control business-hours" name="start-weekday" id="start-weekday" value="23:59" readonly>
+                            <span> - </span>
+                            <input type="time" class="form-control business-hours" name="end-weekday" id="end-weekday" value="23:59" readonly>
+                            <div class="form-check form-check-inline ms-2">
+                              <input type="checkbox" class="form-check-input" name="weekday-closed" id="weekday-closed" disabled="true" checked>
+                              <label for="weekday-closed">休息</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                              <input type="checkbox" class="form-check-input" name="weekday-24hours" id="weekday-24hours" disabled="true">
+                              <label for="weekday-24hours">24小時</label> 
+                            </div>
+                            ';
+                            break;
+                          case '24 Hours':
+                            echo '
+                            <input type="time" class="form-control business-hours" name="start-weekday" id="start-weekday" value="00:00" readonly>
+                            <span> - </span>
+                            <input type="time" class="form-control business-hours" name="end-weekday" id="end-weekday" value="00:00" readonly>
+                            <div class="form-check form-check-inline ms-2">
+                              <input type="checkbox" class="form-check-input" name="weekday-closed" id="weekday-closed" disabled="true">
+                              <label for="weekday-closed">休息</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                              <input type="checkbox" class="form-check-input" name="weekday-24hours" id="weekday-24hours" disabled="true" checked>
+                              <label for="weekday-24hours">24小時</label> 
+                            </div>
+                            ';
+                            break;
+                          default:
+                            $time = explode(" - ",  $details['weekday_business_hours']);
+                            echo '
+                            <input type="time" class="form-control business-hours" name="start-weekday" id="start-weekday" value="' . $time[0] . '" readonly>
+                            <span> - </span>
+                            <input type="time" class="form-control business-hours" name="end-weekday" id="end-weekday" value="' . $time[1] . '" readonly>
+                            <div class="form-check form-check-inline ms-2">
+                              <input type="checkbox" class="form-check-input" name="weekday-closed" id="weekday-closed" disabled="true">
+                              <label for="weekday-closed">休息</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                              <input type="checkbox" class="form-check-input" name="weekday-24hours" id="weekday-24hours" disabled="true">
+                              <label for="weekday-24hours">24小時</label> 
+                            </div>
+                            ';
+                            break;
+                        }
+                        ?>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-2 offset-2">星期六至日</div>
+                    <div class="col-md-8">
+                      <?php
+                      switch ($details['weekend_business_hours']) {
+                        case 'closed':
+                          echo '
+                          <input type="time" class="form-control business-hours" name="start-weekend" id="start-weekend" value="23:59" readonly>
+                          <span> - </span>
+                          <input type="time" class="form-control business-hours" name="end-weekend" id="end-weekend" value="23:59" readonly>
+                          <div class="form-check form-check-inline ms-2">
+                            <input type="checkbox" class="form-check-input" name="weekend-closed" id="weekend-closed" disabled="true" checked>
+                            <label for="weekend-closed">休息</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input type="checkbox" class="form-check-input" name="weekend-24hours" id="weekend-24hours" disabled="true">
+                            <label for="weekend-24hours">24小時</label> 
+                          </div>
+                          ';
+                          break;
+                        case '24 Hours':
+                          echo '
+                          <input type="time" class="form-control business-hours" name="start-weekend" id="start-weekend" value="00:00" readonly>
+                          <span> - </span>
+                          <input type="time" class="form-control business-hours" name="end-weekend" id="end-weekend" value="00:00" readonly>
+                          <div class="form-check form-check-inline ms-2">
+                            <input type="checkbox" class="form-check-input" name="weekend-closed" id="weekend-closed" disabled="true">
+                            <label for="weekend-closed">休息</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input type="checkbox" class="form-check-input" name="weekend-24hours" id="weekend-24hours" disabled="true" checked>
+                            <label for="weekend-24hours">24小時</label> 
+                          </div>
+                          ';
+                          break;
+                        default:
+                          $time = explode(" - ",  $details['weekend_business_hours']);
+                          echo '
+                          <input type="time" class="form-control business-hours" name="start-weekend" id="start-weekend" value="' . $time[0] . '" readonly>
+                          <span> - </span>
+                          <input type="time" class="form-control business-hours" name="end-weekend" id="end-weekend" value="' . $time[1] . '" readonly>
+                          <div class="form-check form-check-inline ms-2">
+                            <input type="checkbox" class="form-check-input" name="weekend-closed" id="weekend-closed" disabled="true">
+                            <label for="weekend-closed">休息</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input type="checkbox" class="form-check-input" name="weekend-24hours" id="weekend-24hours" disabled="true">
+                            <label for="weekend-24hours">24小時</label> 
+                          </div>
+                          ';
+                          break;
+                      }
+                      ?>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-2 offset-2">公眾假期</div>
+                    <div class="col-md-8">
+                      <?php
+                      switch ($details['holiday_business_hours']) {
+                        case 'closed':
+                          echo '
+                          <input type="time" class="form-control business-hours" name="start-holiday" id="start-holiday" value="23:59" readonly>
+                          <span> - </span>
+                          <input type="time" class="form-control business-hours" name="end-holiday" id="end-holiday" value="23:59" readonly>
+                          <div class="form-check form-check-inline ms-2">
+                            <input type="checkbox" class="form-check-input" name="holiday-closed" id="holiday-closed" disabled="true" checked>
+                            <label for="holiday-closed">休息</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input type="checkbox" class="form-check-input" name="holiday-24hours" id="holiday-24hours" disabled="true">
+                            <label for="holiday-24hours">24小時</label> 
+                          </div>
+                          ';
+                          break;
+                        case '24 Hours':
+                          echo '
+                          <input type="time" class="form-control business-hours" name="start-holiday" id="start-holiday" value="00:00" readonly>
+                          <span> - </span>
+                          <input type="time" class="form-control business-hours" name="end-holiday" id="end-holiday" value="00:00" readonly>
+                          <div class="form-check form-check-inline ms-2">
+                            <input type="checkbox" class="form-check-input" name="holiday-closed" id="holiday-closed" disabled="true">
+                            <label for="holiday-closed">休息</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input type="checkbox" class="form-check-input" name="holiday-24hours" id="holiday-24hours" disabled="true" checked>
+                            <label for="holiday-24hours">24小時</label> 
+                          </div>
+                          ';
+                          break;
+                        default:
+                          $time = explode(" - ",  $details['holiday_business_hours']);
+                          echo '
+                          <input type="time" class="form-control business-hours" name="start-holiday" id="start-holiday" value="' . $time[0] . '" readonly>
+                          <span> - </span>
+                          <input type="time" class="form-control business-hours" name="end-holiday" id="end-holiday" value="' . $time[1] . '" readonly>
+                          <div class="form-check form-check-inline ms-2">
+                            <input type="checkbox" class="form-check-input" name="holiday-closed" id="holiday-closed" disabled="true">
+                            <label for="holiday-closed">休息</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input type="checkbox" class="form-check-input" name="holiday-24hours" id="holiday-24hours" disabled="true">
+                            <label for="holiday-24hours">24小時</label> 
+                          </div>
+                          ';
+                          break;
+                      }
+                      ?>
+                    </div>
+                  </div>
+                  <!-- Payment Method -->
+                  <div class="row">
+                    <div class="col-md-2">
+                      付款方式
+                      <span class="text-danger">*<span>
+                    </div>
+                    <div class="col-md-10" id="payment-checkboxes">
+                      <!-- Print the payment method with check box -->
+                      <?php
+                      $sql = "SELECT * FROM `Payment_Method_List`;";
+                      $rs = mysqli_query($conn, $sql);
+
+                      while ($method = mysqli_fetch_assoc($rs)) {
+                        if ($method['method_id'] == '0') {
+                          // empty
+                        } else {
+                          echo '<div class="form-check form-check-inline">';
+                          echo '<input class="form-check-input" type="checkbox" value="' . $method['method_id'] . '"' . (in_array($method['method_id'], $methods) ? 'checked="checked"' : '') . 'disabled="true">';
+                          echo '<label class="form-check-label">' . $method['zh-hk'] . '</label>';
+                          echo '</div>';
+                        }
+                      }
+                      ?>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Information of the person in charge of the guesthouse -->
+              <div class="card">
+                <div class="card-body">
+                  <h3 class="text-secondary">民宿負責人資料</h3>
+                  <div class="row">
+                    <div class="col-md-2">
+                      您的資料
+                    </div>
+                    <div class="col-md-5">
+                      <input class="form-control" type="text" placeholder="民宿負責人姓名" value=<?php echo '"' . $details['contact_name'] . '"'; ?> readonly>
+                    </div>
+                    <div class="col-md-5">
+                      <input class="form-control" type="email" placeholder="電郵" value=<?php echo '"' . $details['contact_email'] . '"'; ?> readonly>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Action Buttons -->
+              <div class="card next">
+                <div class="card-body text-end">
+                  <button id="next-to-register" class="btn btn-primary next-btn">下一步</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 2 - Register form -->
+        <section id="step-2">
+          <div class="row">
+            <div class="col-md-10 offset-1">
+              <!-- Title -->
+              <div class="card">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-8">
+                      <h3 class="text-secondary">帳號註冊</h3>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Account Information -->
+              <form id="collab-register">
+
+                <!-- Account Information -->
+                <div class="card">
+                  <div class="card-body">
+                    <!-- Email Address -->
+                    <div class="row">
+                      <div class="col-md-2">
+                        <label>電郵地址</label>
+                        <span class="text-danger">*</span>
+                      </div>
+                      <div class="col-md-10">
+                        <input type="email" class="form-control" name="collab-email" id="collab-email" value="<?php echo $details['contact_email']; ?>">
+                      </div>
+                    </div>
+                    <!-- Password -->
+                    <div class="row">
+                      <div class="col-md-2">
+                        <label>密碼</label>
+                        <span class="text-danger">*</span>
+                      </div>
+                      <div class="col-md-10">
+                        <input type="password" class="form-control" name="collab-psw" id="collab-psw">
+                      </div>
+                    </div>
+                    <!-- Confirm Password -->
+                    <div class="row">
+                      <div class="col-md-2">
+                        <label>確認密碼</label>
+                        <span class="text-danger">*</span>
+                      </div>
+                      <div class="col-md-10">
+                        <input type="password" class="form-control" name="collab-confPsw" id="collab-confPsw">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- User Information -->
+                <div class="card">
+                  <div class="card-body">
+                    <!-- First Name -->
+                    <div class="row">
+                      <div class="col-md-2">
+                        <label>名字</label>
+                        <span class="text-danger">*</span>
+                      </div>
+                      <div class="col-md-10">
+                        <input type="text" class="form-control" name="collab-firstname" id="collab-firstname">
+                      </div>
+                    </div>
+                    <!-- Last Name -->
+                    <div class="row">
+                      <div class="col-md-2">
+                        <label>姓氏</label>
+                        <span class="text-danger">*</span>
+                      </div>
+                      <div class="col-md-10">
+                        <input type="text" class="form-control" name="collab-lastname" id="collab-lastname">
+                      </div>
+                    </div>
+                    <!-- Phone Number -->
+                    <div class="row">
+                      <div class="col-md-2">
+                        <label>電話號碼</label>
+                        <span class="text-danger">*</span>
+                      </div>
+                      <div class="col-md-10">
+                        <input type="text" class="form-control" name="collab-phoneNo" id="collab-phoneNo" maxlength="8" oninput="value=value.replace(/[^\d]/g,'')">
+                      </div>
+                    </div>
+                    <!-- Gender -->
+                    <div class="row">
+                      <div class="col-md-2">
+                        <label>性別</label>
+                        <span class="text-danger">*</span>
+                      </div>
+                      <div class="col-md-10">
+                        <select id="collab-gender" name="collab-gender" class="form-select input">
+                          <option value="" selected="selected" hidden="hidden">性別</option>
+                          <option value="m">男</option>
+                          <option value="f">女</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+
+              <!-- Button -->
+              <div class="card next">
+                <div class="card-body text-end">
+                  <button id="next-to-guesthouse" class="btn btn-primary next-btn">下一步</button>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 3 - Guesthouse Information -->
+        <section id="step-3">
+
+          <div class="row">
+            <div class="col-md-10 offset-1">
+              <!-- Title -->
+              <div class="card">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-8">
+                      <h3 class="text-secondary">即將創建的民宿資訊</h3>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Guesthouse Information (Display only) -->
+              <div class="card">
+                <div class="card-body">
+                  <h3 class="text-secondary">民宿資料</h3>
+                  <!-- Attraction name -->
+                  <div class="row">
+                    <div class="col-md-2">
+                      <label>民宿名稱</label>
+                      <span class="text-danger">*</span>
+                    </div>
+                    <div class="col-md-5">
+                      <input class="form-control" type="text" placeholder="中文" value=<?php echo '"' . $details['guesthouse_chinese_name'] . '"'; ?> readonly>
+                    </div>
+                    <div class="col-md-5">
+                      <input class="form-control" type="text" placeholder="英文" value=<?php echo '"' . $details['guesthouse_english_name'] . '"'; ?> readonly>
+                    </div>
+                  </div>
+                  <!-- District -->
+                  <div class="row">
+                    <div class="col-md-2">
+                      <label>地區</label>
+                      <span class="text-danger">*</span>
+                    </div>
+                    <div class="col-md-10">
+                      <select class="form-select" disabled="true">
+                        <option value="" selected disabled hidden>請選擇地區</option>
+                        <?php
+                        $region_sql = "SELECT * FROM `hong_kong_region`;";
+                        $region_rs = mysqli_query($conn, $region_sql);
+
+                        while ($region = mysqli_fetch_assoc($region_rs)) {
+                          echo "<optgroup label=\"" . $region['zh-hk'] . "\">";
+
+                          $district_sql = "SELECT * FROM `hong_kong_district` WHERE region_id = " . $region['region_id'] . ";";
+                          $district_rs = mysqli_query($conn, $district_sql);
+                          while ($district = mysqli_fetch_assoc($district_rs)) {
+                            if ($details['district'] == $district['district_id']) {
+                              echo "<option value=\"" . $district['district_id'] . "\" selected>" . $district['zh-hk'] . "</option>";
+                            } else {
+                              echo "<option value=\"" . $district['district_id'] . "\">" . $district['zh-hk'] . "</option>";
+                            }
+                          }
+                          echo "</optgroup>";
+                        }
+                        ?>
+                      </select>
+                    </div>
+                  </div>
+                  <!-- Physical Address -->
+                  <div class="row">
+                    <div class="col-md-2">
+                      <label>地址</label>
+                      <span class="text-danger">*</span>
+                    </div>
+                    <div class="col-md-10">
+                      <input class="form-control" type="text" placeholder="中文" value=<?php echo '"' . $details['chinese_address'] . '"'; ?> readonly>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-10 offset-2">
+                      <input class="form-control" type="text" placeholder="英文" value=<?php echo '"' . $details['english_address'] . '"'; ?> readonly>
+                    </div>
+                  </div>
+                  <!-- Guesthouse Contact Information -->
+                  <div class="row">
+                    <div class="col-md-2">
+                      <label>民宿聯絡資料</label>
+                      <span class="text-danger">*<span>
+                    </div>
+                    <div class="col-md-5">
+                      <input class="form-control" type="tel" placeholder="聯絡電話" minlength="8" maxlength="8" oninput="value=value.replace(/[^\d]/g,'')" value=<?php echo '"' . $details['guesthouse_phone_number'] . '"'; ?> readonly>
+                    </div>
+                  </div>
+                  <!-- Storefront -->
+                  <div class="row">
+                    <div class="col-md-2">
+                      <label>門面相片</label>
+                      <span class="text-danger">*<span>
+                    </div>
+                    <div class="col-md-10">
+                      <a class="btn btn-primary" href=<?php echo "\"/travelhk.com/data/collab_request/guesthouse/" . $details['request_id'] . "/storefront.jpg\""; ?> target="_blank">查看相片</a>
+                    </div>
+                  </div>
+                  <!-- Number of Rooms -->
+                  <div class="row">
+                    <div class="col-md-2">
+                      座位數目
+                      <span class="text-danger">*<span>
+                    </div>
+                    <div class="col-md-10">
+                      <div class="input-group">
+                        <input type="number" class="form-control" value=<?php echo '"' . $details['number_of_rooms'] . '"'; ?> readonly>
+                        <span class="input-group-text">間</span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Opening Hours -->
+                  <div class="row">
+                    <div class="col-md-2">
+                      <label>開放時間</label>
+                      <span class="text-danger">*<span>
+                    </div>
+                    <div class="col-md-2">星期一至五</div>
+                    <div class="col-md-8">
+                        <?php
+                        switch ($details['weekday_business_hours']) {
+                          case 'closed':
+                            echo '
+                            <input type="time" class="form-control business-hours" name="start-weekday" id="start-weekday" value="23:59" readonly>
+                            <span> - </span>
+                            <input type="time" class="form-control business-hours" name="end-weekday" id="end-weekday" value="23:59" readonly>
+                            <div class="form-check form-check-inline ms-2">
+                              <input type="checkbox" class="form-check-input" name="weekday-closed" id="weekday-closed" disabled="true" checked>
+                              <label for="weekday-closed">休息</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                              <input type="checkbox" class="form-check-input" name="weekday-24hours" id="weekday-24hours" disabled="true">
+                              <label for="weekday-24hours">24小時</label> 
+                            </div>
+                            ';
+                            break;
+                          case '24 Hours':
+                            echo '
+                            <input type="time" class="form-control business-hours" name="start-weekday" id="start-weekday" value="00:00" readonly>
+                            <span> - </span>
+                            <input type="time" class="form-control business-hours" name="end-weekday" id="end-weekday" value="00:00" readonly>
+                            <div class="form-check form-check-inline ms-2">
+                              <input type="checkbox" class="form-check-input" name="weekday-closed" id="weekday-closed" disabled="true">
+                              <label for="weekday-closed">休息</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                              <input type="checkbox" class="form-check-input" name="weekday-24hours" id="weekday-24hours" disabled="true" checked>
+                              <label for="weekday-24hours">24小時</label> 
+                            </div>
+                            ';
+                            break;
+                          default:
+                            $time = explode(" - ",  $details['weekday_business_hours']);
+                            echo '
+                            <input type="time" class="form-control business-hours" name="start-weekday" id="start-weekday" value="' . $time[0] . '" readonly>
+                            <span> - </span>
+                            <input type="time" class="form-control business-hours" name="end-weekday" id="end-weekday" value="' . $time[1] . '" readonly>
+                            <div class="form-check form-check-inline ms-2">
+                              <input type="checkbox" class="form-check-input" name="weekday-closed" id="weekday-closed" disabled="true">
+                              <label for="weekday-closed">休息</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                              <input type="checkbox" class="form-check-input" name="weekday-24hours" id="weekday-24hours" disabled="true">
+                              <label for="weekday-24hours">24小時</label> 
+                            </div>
+                            ';
+                            break;
+                        }
+                        ?>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-2 offset-2">星期六至日</div>
+                    <div class="col-md-8">
+                      <?php
+                      switch ($details['weekend_business_hours']) {
+                        case 'closed':
+                          echo '
+                          <input type="time" class="form-control business-hours" name="start-weekend" id="start-weekend" value="23:59" readonly>
+                          <span> - </span>
+                          <input type="time" class="form-control business-hours" name="end-weekend" id="end-weekend" value="23:59" readonly>
+                          <div class="form-check form-check-inline ms-2">
+                            <input type="checkbox" class="form-check-input" name="weekend-closed" id="weekend-closed" disabled="true" checked>
+                            <label for="weekend-closed">休息</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input type="checkbox" class="form-check-input" name="weekend-24hours" id="weekend-24hours" disabled="true">
+                            <label for="weekend-24hours">24小時</label> 
+                          </div>
+                          ';
+                          break;
+                        case '24 Hours':
+                          echo '
+                          <input type="time" class="form-control business-hours" name="start-weekend" id="start-weekend" value="00:00" readonly>
+                          <span> - </span>
+                          <input type="time" class="form-control business-hours" name="end-weekend" id="end-weekend" value="00:00" readonly>
+                          <div class="form-check form-check-inline ms-2">
+                            <input type="checkbox" class="form-check-input" name="weekend-closed" id="weekend-closed" disabled="true">
+                            <label for="weekend-closed">休息</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input type="checkbox" class="form-check-input" name="weekend-24hours" id="weekend-24hours" disabled="true" checked>
+                            <label for="weekend-24hours">24小時</label> 
+                          </div>
+                          ';
+                          break;
+                        default:
+                          $time = explode(" - ",  $details['weekend_business_hours']);
+                          echo '
+                          <input type="time" class="form-control business-hours" name="start-weekend" id="start-weekend" value="' . $time[0] . '" readonly>
+                          <span> - </span>
+                          <input type="time" class="form-control business-hours" name="end-weekend" id="end-weekend" value="' . $time[1] . '" readonly>
+                          <div class="form-check form-check-inline ms-2">
+                            <input type="checkbox" class="form-check-input" name="weekend-closed" id="weekend-closed" disabled="true">
+                            <label for="weekend-closed">休息</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input type="checkbox" class="form-check-input" name="weekend-24hours" id="weekend-24hours" disabled="true">
+                            <label for="weekend-24hours">24小時</label> 
+                          </div>
+                          ';
+                          break;
+                      }
+                      ?>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-2 offset-2">公眾假期</div>
+                    <div class="col-md-8">
+                      <?php
+                      switch ($details['holiday_business_hours']) {
+                        case 'closed':
+                          echo '
+                          <input type="time" class="form-control business-hours" name="start-holiday" id="start-holiday" value="23:59" readonly>
+                          <span> - </span>
+                          <input type="time" class="form-control business-hours" name="end-holiday" id="end-holiday" value="23:59" readonly>
+                          <div class="form-check form-check-inline ms-2">
+                            <input type="checkbox" class="form-check-input" name="holiday-closed" id="holiday-closed" disabled="true" checked>
+                            <label for="holiday-closed">休息</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input type="checkbox" class="form-check-input" name="holiday-24hours" id="holiday-24hours" disabled="true">
+                            <label for="holiday-24hours">24小時</label> 
+                          </div>
+                          ';
+                          break;
+                        case '24 Hours':
+                          echo '
+                          <input type="time" class="form-control business-hours" name="start-holiday" id="start-holiday" value="00:00" readonly>
+                          <span> - </span>
+                          <input type="time" class="form-control business-hours" name="end-holiday" id="end-holiday" value="00:00" readonly>
+                          <div class="form-check form-check-inline ms-2">
+                            <input type="checkbox" class="form-check-input" name="holiday-closed" id="holiday-closed" disabled="true">
+                            <label for="holiday-closed">休息</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input type="checkbox" class="form-check-input" name="holiday-24hours" id="holiday-24hours" disabled="true" checked>
+                            <label for="holiday-24hours">24小時</label> 
+                          </div>
+                          ';
+                          break;
+                        default:
+                          $time = explode(" - ",  $details['holiday_business_hours']);
+                          echo '
+                          <input type="time" class="form-control business-hours" name="start-holiday" id="start-holiday" value="' . $time[0] . '" readonly>
+                          <span> - </span>
+                          <input type="time" class="form-control business-hours" name="end-holiday" id="end-holiday" value="' . $time[1] . '" readonly>
+                          <div class="form-check form-check-inline ms-2">
+                            <input type="checkbox" class="form-check-input" name="holiday-closed" id="holiday-closed" disabled="true">
+                            <label for="holiday-closed">休息</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input type="checkbox" class="form-check-input" name="holiday-24hours" id="holiday-24hours" disabled="true">
+                            <label for="holiday-24hours">24小時</label> 
+                          </div>
+                          ';
+                          break;
+                      }
+                      ?>
+                    </div>
+                  </div>
+                  <!-- Payment Method -->
+                  <div class="row">
+                    <div class="col-md-2">
+                      付款方式
+                      <span class="text-danger">*<span>
+                    </div>
+                    <div class="col-md-10" id="payment-checkboxes">
+                      <!-- Print the payment method with check box -->
+                      <?php
+                      $sql = "SELECT * FROM `Payment_Method_List`;";
+                      $rs = mysqli_query($conn, $sql);
+
+                      while ($method = mysqli_fetch_assoc($rs)) {
+                        if ($method['method_id'] == '0') {
+                          // empty
+                        } else {
+                          echo '<div class="form-check form-check-inline">';
+                          echo '<input class="form-check-input" type="checkbox" value="' . $method['method_id'] . '"' . (in_array($method['method_id'], $methods) ? 'checked="checked"' : '') . 'disabled="true">';
+                          echo '<label class="form-check-label">' . $method['zh-hk'] . '</label>';
+                          echo '</div>';
+                        }
+                      }
+                      ?>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Guesthouse Information (Form) -->
+              <form id="collab-guesthouse" class="hidden">
+                <!-- Guesthouse name -->
+                  <input class="form-control" type="text" name="chi-name" id="chi-name" placeholder="中文" value=<?php echo '"' . $details['guesthouse_chinese_name'] . '"'; ?> readonly>
+                  <input class="form-control" type="text" name="eng-name" id="eng-name" placeholder="英文" value=<?php echo '"' . $details['guesthouse_english_name'] . '"'; ?> readonly>
+                <!-- District -->
+                  <select class="form-select" id="district" name="district">
+                    <option value="" selected hidden>請選擇地區</option>
+                    <?php
+                    $region_sql = "SELECT * FROM `hong_kong_region`;";
+                    $region_rs = mysqli_query($conn, $region_sql);
+
+                    while ($region = mysqli_fetch_assoc($region_rs)) {
+                      echo "<optgroup label=\"" . $region['zh-hk'] . "\">";
+
+                      $district_sql = "SELECT * FROM `hong_kong_district` WHERE region_id = " . $region['region_id'] . ";";
+                      $district_rs = mysqli_query($conn, $district_sql);
+                      while ($district = mysqli_fetch_assoc($district_rs)) {
+                        if ($details['district'] == $district['district_id']) {
+                          echo "<option value=\"" . $district['district_id'] . "\" selected>" . $district['zh-hk'] . "</option>";
+                        } else {
+                          echo "<option value=\"" . $district['district_id'] . "\">" . $district['zh-hk'] . "</option>";
+                        }
+                      }
+                      echo "</optgroup>";
+                    }
+                    ?>
+                  </select>
+                <!-- Physical Address -->
+                  <input class="form-control" type="text" name="chi-address" id="chi-address" placeholder="中文" value=<?php echo '"' . $details['chinese_address'] . '"'; ?> readonly>
+                  <input class="form-control" type="text" name="eng-address" id="eng-address" placeholder="英文" value=<?php echo '"' . $details['english_address'] . '"'; ?> readonly>
+                <!-- Guesthouse Contact Information -->
+                  <input class="form-control" type="tel" name="guesthouse-phoneNo" id="guesthouse-phoneNo" placeholder="聯絡電話" minlength="8" maxlength="8" oninput="value=value.replace(/[^\d]/g,'')" value=<?php echo '"' . $details['guesthouse_phone_number'] . '"'; ?> readonly>
+                  <input class="form-control" type="email" name="email" id="email" placeholder="電郵" value="<?php echo $details['guesthouse_email']; ?>" readonly>
+                <!-- Storefront -->
+                  <a class="btn btn-primary" href=<?php echo "\"/travelhk.com/data/collab_request/guesthouse/" . $details['request_id'] . "/storefront.jpg\""; ?> target="_blank">查看相片</a>
+                <!-- Number of Rooms -->
+                  <input type="number" class="form-control" id="rooms" name="rooms" value=<?php echo '"' . $details['number_of_rooms'] . '"'; ?> readonly>
+                <!-- Opening Hours -->
+                  <?php
+                  switch ($details['weekday_business_hours']) {
+                    case 'closed':
+                      echo '
+                      <input type="time" class="form-control business-hours" name="start-weekday" id="start-weekday" value="23:59" readonly>
+                      <span> - </span>
+                      <input type="time" class="form-control business-hours" name="end-weekday" id="end-weekday" value="23:59" readonly>
+                      <div class="form-check form-check-inline ms-2">
+                        <input type="checkbox" class="form-check-input" name="weekday-closed" id="weekday-closed" disabled="true" checked>
+                        <label for="weekday-closed">休息</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input type="checkbox" class="form-check-input" name="weekday-24hours" id="weekday-24hours" disabled="true">
+                        <label for="weekday-24hours">24小時</label> 
+                      </div>
+                      ';
+                      break;
+                    case '24 Hours':
+                      echo '
+                      <input type="time" class="form-control business-hours" name="start-weekday" id="start-weekday" value="00:00" readonly>
+                      <span> - </span>
+                      <input type="time" class="form-control business-hours" name="end-weekday" id="end-weekday" value="00:00" readonly>
+                      <div class="form-check form-check-inline ms-2">
+                        <input type="checkbox" class="form-check-input" name="weekday-closed" id="weekday-closed" disabled="true">
+                        <label for="weekday-closed">休息</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input type="checkbox" class="form-check-input" name="weekday-24hours" id="weekday-24hours" disabled="true" checked>
+                        <label for="weekday-24hours">24小時</label> 
+                      </div>
+                      ';
+                      break;
+                    default:
+                      $time = explode(" - ",  $details['weekday_business_hours']);
+                      echo '
+                      <input type="time" class="form-control business-hours" name="start-weekday" id="start-weekday" value="' . $time[0] . '" readonly>
+                      <span> - </span>
+                      <input type="time" class="form-control business-hours" name="end-weekday" id="end-weekday" value="' . $time[1] . '" readonly>
+                      <div class="form-check form-check-inline ms-2">
+                        <input type="checkbox" class="form-check-input" name="weekday-closed" id="weekday-closed" disabled="true">
+                        <label for="weekday-closed">休息</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input type="checkbox" class="form-check-input" name="weekday-24hours" id="weekday-24hours" disabled="true">
+                        <label for="weekday-24hours">24小時</label> 
+                      </div>
+                      ';
+                      break;
+                  }
+                  switch ($details['weekend_business_hours']) {
+                    case 'closed':
+                      echo '
+                      <input type="time" class="form-control business-hours" name="start-weekend" id="start-weekend" value="23:59" readonly>
+                      <span> - </span>
+                      <input type="time" class="form-control business-hours" name="end-weekend" id="end-weekend" value="23:59" readonly>
+                      <div class="form-check form-check-inline ms-2">
+                        <input type="checkbox" class="form-check-input" name="weekend-closed" id="weekend-closed" disabled="true" checked>
+                        <label for="weekend-closed">休息</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input type="checkbox" class="form-check-input" name="weekend-24hours" id="weekend-24hours" disabled="true">
+                        <label for="weekend-24hours">24小時</label> 
+                      </div>
+                      ';
+                      break;
+                    case '24 Hours':
+                      echo '
+                      <input type="time" class="form-control business-hours" name="start-weekend" id="start-weekend" value="00:00" readonly>
+                      <span> - </span>
+                      <input type="time" class="form-control business-hours" name="end-weekend" id="end-weekend" value="00:00" readonly>
+                      <div class="form-check form-check-inline ms-2">
+                        <input type="checkbox" class="form-check-input" name="weekend-closed" id="weekend-closed" disabled="true">
+                        <label for="weekend-closed">休息</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input type="checkbox" class="form-check-input" name="weekend-24hours" id="weekend-24hours" disabled="true" checked>
+                        <label for="weekend-24hours">24小時</label> 
+                      </div>
+                      ';
+                      break;
+                    default:
+                      $time = explode(" - ",  $details['weekend_business_hours']);
+                      echo '
+                      <input type="time" class="form-control business-hours" name="start-weekend" id="start-weekend" value="' . $time[0] . '" readonly>
+                      <span> - </span>
+                      <input type="time" class="form-control business-hours" name="end-weekend" id="end-weekend" value="' . $time[1] . '" readonly>
+                      <div class="form-check form-check-inline ms-2">
+                        <input type="checkbox" class="form-check-input" name="weekend-closed" id="weekend-closed" disabled="true">
+                        <label for="weekend-closed">休息</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input type="checkbox" class="form-check-input" name="weekend-24hours" id="weekend-24hours" disabled="true">
+                        <label for="weekend-24hours">24小時</label> 
+                      </div>
+                      ';
+                      break;
+                  }
+                  switch ($details['holiday_business_hours']) {
+                    case 'closed':
+                      echo '
+                      <input type="time" class="form-control business-hours" name="start-holiday" id="start-holiday" value="23:59" readonly>
+                      <span> - </span>
+                      <input type="time" class="form-control business-hours" name="end-holiday" id="end-holiday" value="23:59" readonly>
+                      <div class="form-check form-check-inline ms-2">
+                        <input type="checkbox" class="form-check-input" name="holiday-closed" id="holiday-closed" disabled="true" checked>
+                        <label for="holiday-closed">休息</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input type="checkbox" class="form-check-input" name="holiday-24hours" id="holiday-24hours" disabled="true">
+                        <label for="holiday-24hours">24小時</label> 
+                      </div>
+                      ';
+                      break;
+                    case '24 Hours':
+                      echo '
+                      <input type="time" class="form-control business-hours" name="start-holiday" id="start-holiday" value="00:00" readonly>
+                      <span> - </span>
+                      <input type="time" class="form-control business-hours" name="end-holiday" id="end-holiday" value="00:00" readonly>
+                      <div class="form-check form-check-inline ms-2">
+                        <input type="checkbox" class="form-check-input" name="holiday-closed" id="holiday-closed" disabled="true">
+                        <label for="holiday-closed">休息</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input type="checkbox" class="form-check-input" name="holiday-24hours" id="holiday-24hours" disabled="true" checked>
+                        <label for="holiday-24hours">24小時</label> 
+                      </div>
+                      ';
+                      break;
+                    default:
+                      $time = explode(" - ",  $details['holiday_business_hours']);
+                      echo '
+                      <input type="time" class="form-control business-hours" name="start-holiday" id="start-holiday" value="' . $time[0] . '" readonly>
+                      <span> - </span>
+                      <input type="time" class="form-control business-hours" name="end-holiday" id="end-holiday" value="' . $time[1] . '" readonly>
+                      <div class="form-check form-check-inline ms-2">
+                        <input type="checkbox" class="form-check-input" name="holiday-closed" id="holiday-closed" disabled="true">
+                        <label for="holiday-closed">休息</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input type="checkbox" class="form-check-input" name="holiday-24hours" id="holiday-24hours" disabled="true">
+                        <label for="holiday-24hours">24小時</label> 
+                      </div>
+                      ';
+                      break;
+                  }
+                  ?>
+                <!-- Payment methods -->
+                  <?php
+                  $sql = "SELECT * FROM `payment_method_list`;";
+                  $rs = mysqli_query($conn, $sql);
+
+                  while ($method = mysqli_fetch_assoc($rs)) {
+                    if ($method['method_id'] == '0') {
+                      // empty
+                    } else {
+                      echo '<input class="form-check-input payment-method" type="checkbox" id="' . str_replace(' ', '', $method['en']) . '" value="' . $method['method_id'] . '" name="payment[]"' .
+                        (in_array($method['method_id'], $methods) ? 'checked="checked"' : '') . '>';
+                    }
+                  }
+                  ?>
+              </form>
+                
+              <!-- Button -->
+              <div class="card next">
+                <div class="card-body text-end">
+                  <button id="next-to-finish" class="btn btn-primary next-btn">完成</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- Finish -->
+        <section id="finish">
+          <div class="row">
+            <div class="col-md-10 offset-1 text-center">
+              <div class="card">
+                <div class="card-body">
+                  <p>你的帳號及民宿創建成功！</p>
+                  <p>請到合作夥伴管理頁面登入。</p>
+                  <p>
+                    <a href="/<?php echo $_COOKIE['lang']; ?>/partner" class="btn btn-primary">前往</a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Finished -->
+        <section id="finished"></section>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <?php include_once('../common/footer.php'); ?>
+
+</body>
+
+</html>

@@ -1,0 +1,56 @@
+/* Setup the card size and position */
+#user-profile,
+#user-menu {
+  width: 18rem;
+  margin-top: 20px;
+}
+#user-profile-info {
+  margin-top: 20px;
+}
+#user-profile-info-body {
+  padding: 1.25rem 1.25rem;
+}
+
+/* Setup the font style */
+.card-title {
+  font-weight: bold;
+}
+
+/* Setup the nav tabs style */
+.nav-tabs .nav-link.active {
+  border-color: #dee2e6 #dee2e6 #0093ff;
+  border-width: 1px 1px 2px 1px;
+}
+
+/* Setup the tab contents style */
+.tab-content .tab-pane {
+  padding: 0.75rem 1rem;
+}
+.tab-content .row {
+  margin-bottom: 20px;
+}
+.tab-content .row:last-child {
+  margin-bottom: 0px;
+}
+.sub-title {
+  margin: 10px 0;
+  font-size: 20px;
+  font-weight: bold;
+}
+.sub-title::before {
+  content: "";
+  display: inline-block;
+  position: static;
+  width: 6px;
+  height: 24px;
+  margin-right: 8px;
+  background-color: #333;
+  vertical-align: top;
+  border-radius: 4px;
+}
+
+/* Menu */
+#user-menu .list-group-item:first-child {
+  border-top-left-radius: initial;
+  border-top-right-radius: initial;
+}

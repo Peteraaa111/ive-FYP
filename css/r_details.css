@@ -1,0 +1,90 @@
+#banner {
+  margin-bottom: 0px;
+  position: relative;
+  background: none;
+  color: #dedddb;
+}
+#banner-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-position: 0% 25%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  -webkit-filter: blur(30px);
+  -moz-filter: blur(30px);
+  -o-filter: blur(30px);
+  -ms-filter: blur(30px);
+  filter: blur(30px);
+  z-index: -1;
+}
+#banner-info {
+  color: aliceblue;
+  font-weight: bold;
+}
+.padding-4rem {
+  padding: 4rem !important;
+}
+
+ul li div.content {
+  height: 200px;
+  width: 200px;
+}
+.photos .item:first-child {
+  margin-left: 0;
+}
+.photos .item:nth-child(4) {
+  margin-left: 0;
+}
+.photos .item {
+  margin-left: 70px;
+}
+/* ul li div.cover{
+    color: #fff;
+    font-size: 30px;
+    font-weight: 700;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,.5);
+    text-align: center;
+} */
+ul li.item {
+  display: inline-block;
+  text-decoration: none;
+}
+.review-content {
+  margin-bottom: 10px;
+}
+.review-photos .list .item:first-child {
+  margin-left: 0;
+}
+.review-photos .list .item {
+  margin-left: 20px;
+}
+
+
+.hidetext {
+  display: none;
+  margin-left:10px;
+}
+
+#showtext:hover + .hidetext {
+  display: block;
+}
+
+.checked {
+  color: orange;
+}
+
+#chi-map-btn, #eng-map-btn {
+  text-align: left;
+  margin-left: -3%;
+}
+
+#map-view {
+  width: 465px;
+  height: 350px;
+}

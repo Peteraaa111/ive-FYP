@@ -1,0 +1,64 @@
+.modal-body {
+  padding-top: 0;
+}
+.from-control.input {
+  height: 40px;
+}
+.or-td-wrap .td1 {
+  width: 40%;
+  height: 19px;
+  border-bottom: 1px solid rgb(212, 212, 212);
+  float: left;
+}
+.or-td-wrap .td2 {
+  width: 20%;
+  text-align: center;
+  line-height: 39px;
+  font-size: 14px;
+  color: #666;
+  float: left;
+}
+.bullet_list {
+  padding-left: 2vh;
+}
+.bullet_list li {
+  list-style-type: square;
+  font-size: 14px;
+}
+
+/* Default hidden error message*/
+.bullet_list li.error {
+  display: none;
+}
+
+/* Error message in Register form of email format checking */
+.r_email.error + .bullet_list li {
+  color: #931313;
+}
+.r_email.error + .bullet_list li#email_not_valid {
+  display: list-item;
+}
+
+/* Error message in Register form of password format checking */
+.r_psw.error + .r_cpsw + .bullet_list li {
+  color: #931313;
+}
+.r_psw.error + .r_cpsw + .bullet_list li#not_valid {
+  display: list-item;
+}
+.r_cpsw.error + .bullet_list li {
+  color: #931313;
+}
+.r_cpsw.error + .bullet_list li#not_equals {
+  display: list-item;
+}
+
+/* Nickname input error effect */
+.r_nickname.error + .bullet_list li {
+  color: #931313;
+}
+
+/* Phone Number input error effect */
+.r_phoneNo.error + .bullet_list li {
+  color: #931313;
+}

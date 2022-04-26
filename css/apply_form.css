@@ -1,0 +1,25 @@
+.card {
+  margin-top: 20px;
+}
+
+.card .card {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.card .card .card-body .row {
+  margin-bottom: 10px;
+}
+
+.card .card .card-body .row:last-child {
+  margin-bottom: 0px;
+}
+
+.hidden {
+  display: none;
+}
+
+.business-hours {
+  display: inline-block;
+  width: 150px;
+}
